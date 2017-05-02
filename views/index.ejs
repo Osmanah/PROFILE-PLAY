@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Profile-play</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+     <!-- css js o-grid -->
+    <link rel="stylesheet" type="text/css" href="css/default.css" />
+    <link rel="stylesheet" type="text/css" href="css/component.css" />
+    <script src="js/modernizr.custom.js"></script>
+    <!-- Font google -->
+    <link href="https://fonts.googleapis.com/css?family=Faster+One" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.9/semantic.min.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.9/semantic.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+</head>
+
+<body>
+      <!-- header -->
+    <div class="profile-div">
+        <h1 class="profile-titre">Profile-play</h1>
+    </div>
+     <!-- les images -->
+             <ul id="og-grid" class="og-grid">
+                  <template id="photo">
+                      <li> <a href="#"><img/> </a></li>
+                  </template>
+            </ul>
+  <hr>
+    <!-- deuximent partie -->
+            <h1 class="aligned">Find and full her/his name</h1>
+     <!-- des profiles -->
+    <div id="list">
+        <% for (let user of userHandler) {%>
+            <div class="flex">
+                <div class="ui card flex">
+                    <div class="image">
+                        <img src="quest.png">
+                    </div>
+                    <div class="content">
+
+        <a class="header"><h3>Name:&nbsp; <%= user.Name %></h3></a><br>
+        <a class="header"><h4> Index:&nbsp; <%= user.Index%></h4></a><br>
+
+                          <form action="/post" method="post" class="ui form">
+                                    <div class="field">
+                                        <label>YOUR - ANSWER</label>
+                                        <input type="text" name="Answer" placeholder="YOUR ANSWER" required>
+                                    </div>
+                                    <input class="ui primary button" name="button" type="submit"></input>
+                        </form>
+                  </div>
+               </div>
+            </div>
+
+       <% } %>
+
+   </div>
+<hr>
+
+
+ <!-- troisieme partie -->
+    <h1 class="aligned">CREATE YOUR PROFILE-PALY</h1>
+
+<!-- form  -->
+<div id="form">
+    <form action="/post" method="post" class="ui form">
+          <div class="field">
+                     <label>CHOOSE&nbsp;YOUR&nbsp;ID</label>
+                <input type="number" name="Id" placeholder="Your Id should be unique" required>
+          </div>
+          <div class="field">
+                <label>NAME</label>
+                <input type="text" name="Name" placeholder="Name" required>
+          </div>
+          <div class="field">
+                       <label>YOUR&nbsp;INDEX </label>
+                <textarea rows="2" cols="50" type="text" name="Index" placeholder="Your index ?" required>
+                </textarea>
+          </div>
+          <div class="field">
+                <label>IMAGE</label> Title: <input type="text" name="title"><br/>
+                <input type="file" name="file" placeholder="Image">
+          </div>
+            <input class="ui primary button" name="button" type="submit"></input>
+    </form>
+</div>
+
+
+    <script type="text/javascript" src="script.js"></script>
+    <script src="js/grid.js"></script>
+
+    <script>
+        var grid = document.getElementById('og-grid');
+        var template = document.getElementById('photo');
+        Grid.init();
+        window.setInterval(function() {
+            var request = new XMLHttpRequest();
+            request.addEventListener('load', function() {
+                var res = JSON.parse(this.responseText);
+                var newItems = $();
+                for (const img of res) {
+                    if (grid.querySelector('[data-largesrc="' + img.url + '"]') === null) {
+                        var newPhoto = document.importNode(template.content, true);
+                        var link = newPhoto.querySelector('a');
+                        link.setAttribute('data-largesrc', img.url);
+                        link.setAttribute('data-title', img.title.split('.')[0]);
+                        link.firstElementChild.src = img.url
+                        link.firstElementChild.setAttribute('alt', img.title);
+                        grid.appendChild(newPhoto);
+                        newItems = newItems.add($(grid.lastElementChild));
+                    }
+                }
+                Grid.addItems(newItems);
+            });
+            request.open('GET', 'http://' + window.location.hostname + ':3010/photos');
+            request.send();
+        }, 1000);
+
+        $('form').submit(function() {
+            var data = new FormData($(this)[0]);
+            $.ajax({
+                url: 'http://' + window.location.hostname + ':3010/photos',
+                type: 'POST',
+                data: data,
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+            return false;
+        });
+    </script>
+</body>
+
+</html>
