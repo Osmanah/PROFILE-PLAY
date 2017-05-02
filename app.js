@@ -7,7 +7,7 @@ const pg         = require('pg');
 const bodyParser = require('body-parser');
 const app        = express();
 const client   = require('pg-client');
-const pgURL      = process.env.DATABASE_URL || 'postgres://myfirstdb:12345@localhost/Datapromo';
+const pgURL      = process.env.DATABASE_URL || 'postgres://xxxxxx:xxxxx@localhost/xxxx';
 
 // upload image dure
 
